@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:nvarsakiya.wixsite.com)"
+    ],
+    "deny": []
+  }
+}
