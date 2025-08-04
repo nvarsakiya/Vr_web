@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initContactForm();
     initSmoothScrolling();
     initMobileMenu();
+    initGallery();
 });
 
 // Navigation Functions
@@ -495,10 +496,152 @@ console.log(`
 'color: #1565C0; font-size: 14px;',
 'color: #666; font-size: 12px;');
 
+// Gallery Functions
+function initGallery() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    if (filterBtns.length === 0 || galleryItems.length === 0) {
+        return; // Gallery not present on this page
+    }
+    
+    // Filter functionality
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active button
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter gallery items
+            galleryItems.forEach(item => {
+                const category = item.getAttribute('data-category');
+                
+                if (filter === 'all' || category === filter) {
+                    item.classList.remove('hidden');
+                    item.style.animation = 'fadeInUp 0.6s ease forwards';
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+    });
+    
+    // Modal functionality
+    initGalleryModal();
+}
+
+function initGalleryModal() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    // Create modal if it doesn't exist
+    let modal = document.querySelector('.gallery-modal');
+    if (!modal) {
+        modal = createGalleryModal();
+        document.body.appendChild(modal);
+    }
+    
+    const modalImg = modal.querySelector('.gallery-modal img');
+    const modalTitle = modal.querySelector('.gallery-modal-info h4');
+    const modalDesc = modal.querySelector('.gallery-modal-info p');
+    const closeBtn = modal.querySelector('.gallery-modal-close');
+    
+    // Add click handlers to gallery items
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const img = this.querySelector('img');
+            const overlay = this.querySelector('.gallery-overlay');
+            
+            if (img && overlay) {
+                const title = overlay.querySelector('h4').textContent;
+                const desc = overlay.querySelector('p').textContent;
+                
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                modalTitle.textContent = title;
+                modalDesc.textContent = desc;
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+    
+    // Close modal handlers
+    closeBtn.addEventListener('click', closeGalleryModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeGalleryModal();
+        }
+    });
+    
+    // ESC key handler
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeGalleryModal();
+        }
+    });
+    
+    function closeGalleryModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function createGalleryModal() {
+    const modal = document.createElement('div');
+    modal.className = 'gallery-modal';
+    modal.innerHTML = `
+        <div class="gallery-modal-content">
+            <button class="gallery-modal-close">&times;</button>
+            <img src="" alt="">
+            <div class="gallery-modal-info">
+                <h4></h4>
+                <p></p>
+            </div>
+        </div>
+    `;
+    return modal;
+}
+
+// Gallery Animation on Scroll
+function initGalleryAnimations() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100); // Stagger animation
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    galleryItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'all 0.6s ease';
+        observer.observe(item);
+    });
+}
+
+// Initialize gallery animations when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initGalleryAnimations, 500);
+});
+
 // Export functions for potential external use
 window.VREcoEnergy = {
     showNotification,
     validateForm,
     initScrollAnimations,
-    initContactForm
+    initContactForm,
+    initGallery
 };
