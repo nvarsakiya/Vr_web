@@ -13,17 +13,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // Navigation Functions
 function initNavigation() {
     const navbar = document.querySelector('.navbar');
+    let ticking = false;
     
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
+    // Optimized navbar scroll effect with passive listener and RAF
+    function updateNavbar() {
         if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-            navbar.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.15)';
+            navbar.classList.add('scrolled');
         } else {
-            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            navbar.classList.remove('scrolled');
         }
-    });
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavbar);
+            ticking = true;
+        }
+    }, { passive: true });
 }
 
 // Mobile Menu Functions
@@ -325,25 +332,30 @@ function initBackToTop() {
         height: 50px;
         font-size: 1.5rem;
         cursor: pointer;
-        opacity: 0;
-        transform: translateY(100px);
-        transition: all 0.3s ease;
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
     `;
     
     document.body.appendChild(backToTopBtn);
     
-    // Show/hide based on scroll position
-    window.addEventListener('scroll', function() {
+    // Show/hide based on scroll position with RAF optimization
+    let backToTopTicking = false;
+    
+    function updateBackToTop() {
         if (window.scrollY > 500) {
-            backToTopBtn.style.opacity = '1';
-            backToTopBtn.style.transform = 'translateY(0)';
+            backToTopBtn.classList.add('visible');
         } else {
-            backToTopBtn.style.opacity = '0';
-            backToTopBtn.style.transform = 'translateY(100px)';
+            backToTopBtn.classList.remove('visible');
         }
-    });
+        backToTopTicking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!backToTopTicking) {
+            requestAnimationFrame(updateBackToTop);
+            backToTopTicking = true;
+        }
+    }, { passive: true });
     
     // Scroll to top functionality
     backToTopBtn.addEventListener('click', function() {
@@ -470,7 +482,8 @@ const optimizedScrollHandler = debounce(function() {
     // Add any scroll-dependent functionality here
 }, 10);
 
-window.addEventListener('scroll', optimizedScrollHandler);
+// Use passive listener for better performance
+window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
 
 // Console Welcome Message
 console.log(`
