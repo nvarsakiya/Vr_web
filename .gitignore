@@ -1,6 +1,29 @@
-.git
 .claude
 .vs-code
-.env
 .venv
 
+# Operating System and Editor Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Build Artifacts and Temporary Files
+/dist/
+/build/
+/tmp/
+*.log
+*.tmp
+*.bak
+
+# Node.js specific (if using a build tool like Gulp, Webpack, etc.)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.env
+
+# Other common files to ignore
+.sass-cache/
+.eslintcache
