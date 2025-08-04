@@ -786,6 +786,31 @@ body {
     margin-top: 2rem;
 }
 
+/* Gallery item visibility control */
+.gallery-item.hidden {
+    display: none;
+}
+
+/* Desktop: Show only first 3 rows (typically 12 items) */
+@media (min-width: 769px) {
+    .gallery-grid .gallery-item:nth-child(n+13):not(.always-visible) {
+        display: none;
+    }
+    .gallery-grid.show-all .gallery-item {
+        display: block;
+    }
+}
+
+/* Mobile: Show only first 9 items */
+@media (max-width: 768px) {
+    .gallery-grid .gallery-item:nth-child(n+10):not(.always-visible) {
+        display: none;
+    }
+    .gallery-grid.show-all .gallery-item {
+        display: block;
+    }
+}
+
 .gallery-item {
     position: relative;
     background: white;

@@ -635,7 +635,95 @@ function initGalleryAnimations() {
 // Initialize gallery animations when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initGalleryAnimations, 500);
+    initGalleryViewMore();
 });
+
+// Gallery View More Functionality
+function initGalleryViewMore() {
+    const galleryGrid = document.querySelector('.gallery-grid');
+    const viewMoreBtn = document.getElementById('viewMoreBtn');
+    
+    if (!galleryGrid || !viewMoreBtn) return;
+    
+    const galleryItems = Array.from(galleryGrid.querySelectorAll('.gallery-item'));
+    let isShowingAll = false;
+    
+    // Function to shuffle array (for mobile random selection)
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+    
+    // Function to show/hide gallery items based on screen size
+    function updateGalleryDisplay() {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isShowingAll) {
+            // Show all items
+            galleryItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            return;
+        }
+        
+        if (isMobile) {
+            // Mobile: Show random 9 images
+            const shuffledItems = shuffleArray(galleryItems);
+            galleryItems.forEach(item => {
+                item.style.display = 'none';
+            });
+            shuffledItems.slice(0, 9).forEach(item => {
+                item.style.display = 'block';
+            });
+        } else {
+            // Desktop: Show first 12 items (3 rows of 4)
+            galleryItems.forEach((item, index) => {
+                if (index < 12) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    // View More button click handler
+    viewMoreBtn.addEventListener('click', function() {
+        if (isShowingAll) {
+            // Show less
+            isShowingAll = false;
+            viewMoreBtn.textContent = 'View More Images';
+            updateGalleryDisplay();
+            
+            // Scroll back to gallery
+            const gallerySection = document.querySelector('.gallery-grid').closest('section');
+            if (gallerySection) {
+                gallerySection.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else {
+            // Show all
+            isShowingAll = true;
+            galleryItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            viewMoreBtn.textContent = 'View Less Images';
+        }
+    });
+    
+    // Update display on window resize
+    window.addEventListener('resize', function() {
+        if (!isShowingAll) {
+            updateGalleryDisplay();
+        }
+    });
+    
+    // Initial setup
+    updateGalleryDisplay();
+}
 
 // Export functions for potential external use
 window.VREcoEnergy = {
@@ -643,5 +731,6 @@ window.VREcoEnergy = {
     validateForm,
     initScrollAnimations,
     initContactForm,
-    initGallery
+    initGallery,
+    initGalleryViewMore
 };
