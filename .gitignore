@@ -12,7 +12,7 @@ Thumbs.db
 
 # Build Artifacts and Temporary Files
 #/dist/
-/build/
+# /build/
 /tmp/
 *.log
 *.tmp
