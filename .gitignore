@@ -11,12 +11,13 @@ Thumbs.db
 *.sublime-workspace
 
 # Build Artifacts and Temporary Files
-/dist/
+#/dist/
 /build/
 /tmp/
 *.log
 *.tmp
 *.bak
+*.zip
 
 # Node.js specific (if using a build tool like Gulp, Webpack, etc.)
 node_modules/
